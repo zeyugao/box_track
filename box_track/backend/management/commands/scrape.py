@@ -19,7 +19,7 @@ def main(no_delay):
             frozen_box = box
 
     JapanBox.objects.create(update_time=datetime(
-        int(year), int(month), int(day), int(hour), int(mintue), tzinfo=pytz.timezone('Japan')), frozen_box=box, full_info=full_info)
+        int(year), int(month), int(day), int(hour), int(mintue), tzinfo=pytz.timezone('Japan')), frozen_box=frozen_box, full_info=full_info)
 
 
 class Command(BaseCommand):
