@@ -9,6 +9,7 @@
         <canvas id="canvas"></canvas>
     </div>
     <button id="refresh">Refresh</button>
+    <label id="state"></label>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
@@ -28,7 +29,7 @@
         }
         var config = {
             type: 'line',
-            data: default_data,
+            data: JSON.parse(JSON.stringify(default_data)),
             options: {
                 responsive: true,
                 title: {
@@ -63,7 +64,7 @@
         };
         var colorNames = Object.keys(window.chartColors);
         var update_chart = function (names) {
-            config.data = default_data;
+            document.getElementById('state').innerText = "Loading";
             axios.post("/api/japan_box", { name: names })
                 .then(function (resp) {
                     var color_count = 0;
@@ -81,6 +82,8 @@
                         color_count++;
                     })
                     var box = resp.data.data[0];
+                    config.data = JSON.parse(JSON.stringify(default_data));
+                    console.log(default_data);
                     for (var key in box) {
                         config.data.labels.push(key);
                         var movies_detail = box[key];
@@ -91,14 +94,18 @@
                         config.data.datasets.push(new_datasets[key]);
                     }
                     window.chart.update();
+                    document.getElementById('state').innerText = "Ready";
                 })
         };
+        var update_chart_wrapper = function () {
+            update_chart(["アナと雪の女王２", "スター・ウォーズ スカイウォ…"]);
+        }
         window.onload = function () {
             var ctx = document.getElementById('canvas').getContext('2d');
             window.chart = new Chart(ctx, config);
-            update_chart(["アナと雪の女王２", "スター・ウォーズ スカイウォ…"]);
+            update_chart_wrapper();
         };
-        document.getElementById('refresh').addEventListener('click', update_chart);
+        document.getElementById('refresh').addEventListener('click', update_chart_wrapper);
     </script>
 </body>
 
