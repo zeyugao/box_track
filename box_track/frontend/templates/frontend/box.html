@@ -2,51 +2,104 @@
 <html>
 
 <head>
-    <script>
-        var chart;
-        window.onload = function () {
-            chart = new CanvasJS.Chart("chartContainer", {
-                animationEnabled: true,
-                title: {
-                    text: "Box in japan"
-                },
-                axisY: {
-                    title: "Box",
-                    valueFormatString: "#0,,.",
-                    suffix: "mn"
-                },
-                data: [{
-                    yValueFormatString: "#,### Units",
-                    xValueFormatString: "YYYY/",
-                    type: "spline",
-                    dataPoints: [
-                    ]
-                }]
-            });
-            chart.render();
-
-        }
-        new Vue({
-            data: {
-                json: null
-            },
-            created: function () {
-                fetch("/api/japan_box")
-                    .then(r => r.json())
-                    .then(json => {
-                        var frozen_box = json[0];
-                        for (var key in frozen_box) {
-                            chart.data[0].dataPoints.push({ x: key, y: frozen_box[key] });
-                        }
-                    });
-            }
-        });
-    </script>
 </head>
 
 <body>
-    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <div style="width:75%;">
+        <canvas id="canvas"></canvas>
+    </div>
+    <button id="refresh">Refresh</button>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script>
+        window.chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(75, 192, 192)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+        var default_data = {
+            labels: [],
+            datasets: []
+        }
+        var config = {
+            type: 'line',
+            data: default_data,
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Box in Japan'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'DateTime'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Sale'
+                        }
+                    }
+                }
+            }
+        };
+        var colorNames = Object.keys(window.chartColors);
+        var update_chart = function (names) {
+            config.data = default_data;
+            axios.post("/api/japan_box", { name: names })
+                .then(function (resp) {
+                    var color_count = 0;
+                    var new_datasets = {};
+                    names.forEach(function (item, index) {
+                        var new_color = window.chartColors[colorNames[color_count % colorNames.length]];
+                        new_datasets[item] = {
+                            label: item,
+                            backgroundColor: new_color,
+                            borderColor: new_color,
+                            data: [],
+                            fill: false,
+                            lineTension: 0,
+                        };
+                        color_count++;
+                    })
+                    var box = resp.data.data[0];
+                    for (var key in box) {
+                        config.data.labels.push(new Date(key));
+                        var movies_detail = box[key];
+                        box[key].forEach(movie => new_datasets[movie.name].data.push(movie.sale));
+                    }
+
+                    for (var key in new_datasets) {
+                        config.data.datasets.push(new_datasets[key]);
+                    }
+                    window.chart.update();
+                })
+        };
+        window.onload = function () {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            window.chart = new Chart(ctx, config);
+            update_chart(["アナと雪の女王２", "スター・ウォーズ スカイウォ…"]);
+        };
+        document.getElementById('refresh').addEventListener('click', update_chart);
+    </script>
 </body>
 
 </html>
