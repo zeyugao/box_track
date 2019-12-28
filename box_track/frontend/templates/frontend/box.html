@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <script>
+        var chart;
+        window.onload = function () {
+            chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                title: {
+                    text: "Box in japan"
+                },
+                axisY: {
+                    title: "Box",
+                    valueFormatString: "#0,,.",
+                    suffix: "mn"
+                },
+                data: [{
+                    yValueFormatString: "#,### Units",
+                    xValueFormatString: "YYYY/",
+                    type: "spline",
+                    dataPoints: [
+                    ]
+                }]
+            });
+            chart.render();
+
+        }
+        new Vue({
+            data: {
+                json: null
+            },
+            created: function () {
+                fetch("/api/japan_box")
+                    .then(r => r.json())
+                    .then(json => {
+                        var frozen_box = json[0];
+                        for (var key in frozen_box) {
+                            chart.data[0].dataPoints.push({ x: key, y: frozen_box[key] });
+                        }
+                    });
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+
+</html>

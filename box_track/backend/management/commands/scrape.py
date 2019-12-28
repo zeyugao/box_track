@@ -8,8 +8,9 @@ import time
 import random
 
 
-def main():
-    time.sleep(random.randint(10, 300)+random.random())
+def main(no_delay):
+    if not no_delay:
+        time.sleep(random.randint(10, 300)+random.random())
     update_time, full_info = get_ja_box()
     year, month, day, hour, mintue = update_time[0]
 
@@ -24,5 +25,8 @@ def main():
 class Command(BaseCommand):
     help = 'Scrape the box'
 
-    def handle(self, **kwargs):
-        main()
+    def add_arguments(self, parser):
+        parser.add_argument('--no-delay',action='store_true')
+
+    def handle(self, *args, **options):
+        main(options['no_delay'])
