@@ -82,7 +82,7 @@
                     })
                     var box = resp.data.data[0];
                     for (var key in box) {
-                        config.data.labels.push(new Date(key));
+                        config.data.labels.push(key);
                         var movies_detail = box[key];
                         box[key].forEach(movie => new_datasets[movie.name].data.push(movie.sale));
                     }

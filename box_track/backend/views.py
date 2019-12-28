@@ -1,15 +1,16 @@
-from datetime import datetime
+import datetime
+import json
+from collections import defaultdict
 
 import pytz
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-import json
-from collections import defaultdict
-from django.db.models import Q
+
 from .models import JapanBox
 
 
@@ -24,7 +25,7 @@ class GetJapanBoxView(View):
             })
         now = timezone.now()
         query = JapanBox.objects \
-            .filter(update_time__gt=datetime(now.year, now.month, now.day, tzinfo=pytz.timezone('UTC')))\
+            .filter(update_time__gt=datetime.datetime(now.year, now.month, now.day, tzinfo=pytz.timezone('UTC')))\
 
         if post_data.get('name'):
             query_filter = None
@@ -49,7 +50,7 @@ class GetJapanBoxView(View):
 
         resp = defaultdict(list)
         for box in query:
-            resp[str(box.update_time)].append({
+            resp['{0:%H:%M}'.format(box.update_time+datetime.timedelta(hours=9, minutes=19))].append({
                 'name': box.name,
                 'sale': box.sale
             })

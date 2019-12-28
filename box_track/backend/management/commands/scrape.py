@@ -19,6 +19,7 @@ def main(no_delay):
                            tzinfo=pytz.timezone('Japan'))
 
     if JapanBoxFull.objects.filter(update_time=update_time).exists():
+        print(update_time, 'exists')
         return
 
     for box_info in full_info:
