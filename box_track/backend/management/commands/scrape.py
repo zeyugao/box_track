@@ -24,6 +24,8 @@ def main(no_delay):
     if not no_delay:
         time.sleep(random.randint(10, 300)+random.random())
     update_time, full_info = get_ja_box()
+    if not full_info:
+        raise ValueError('Failed to match the info')
     year, month, day, hour, mintue = update_time[0]
     now_time = timezone.now()
     update_time = datetime(int(year), int(month), int(day), int(hour), int(mintue),
