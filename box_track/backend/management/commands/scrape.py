@@ -17,7 +17,6 @@ def main(no_delay):
     now_time = timezone.now()
     update_time = datetime(int(year), int(month), int(day), int(hour), int(mintue),
                            tzinfo=pytz.timezone('Japan'))
-
     if JapanBoxFull.objects.filter(update_time=update_time).exists():
         print(update_time, 'exists')
         return

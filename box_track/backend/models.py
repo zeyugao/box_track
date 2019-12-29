@@ -20,4 +20,4 @@ class JapanBoxFull(models.Model):
     full_info = models.TextField()
     update_time = models.DateTimeField()
 
-    store_time = models.DateField()
+    store_time = models.DateTimeField()

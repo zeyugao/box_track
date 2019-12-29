@@ -10,12 +10,29 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-
+from backend.management.commands.scrape import main as scrape_japan
 from .models import JapanBox
+from _thread import start_new_thread
+import time
+import random
+
+
+def scrape_japan_with_delay(no_delay):
+    scrape_japan(no_delay)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class GetJapanBoxView(View):
+class UpdateBoxApi(View):
+    def get(self, request, *args, **kwargs):
+        start_new_thread(scrape_japan_with_delay,
+                         (int(request.GET.get('nodelay') or 0),))
+        return JsonResponse({
+            'msg': 'Started'
+        })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GetJapanBoxApi(View):
     def post(self, request, *args, **kwargs):
         try:
             post_data = json.loads(request.body)
@@ -49,12 +66,17 @@ class GetJapanBoxView(View):
             })
 
         resp = defaultdict(list)
+        names = set()
         for box in query:
-            resp['{0:%H:%M}'.format(box.update_time+datetime.timedelta(hours=9, minutes=19))].append({
+            # resp['{0:%H:%M}'.format(box.update_time+datetime.timedelta(hours=9, minutes=19))].append({
+            resp[str(box.update_time)].append({
                 'name': box.name,
                 'sale': box.sale
             })
+            names.add(box.name)
+
         return JsonResponse(data={
+            'names': list(names),
             'data': [
                 resp,
             ]

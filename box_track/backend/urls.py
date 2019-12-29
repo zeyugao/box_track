@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import GetJapanBoxView
+from .views import GetJapanBoxApi, UpdateBoxApi
 
 urlpatterns = [
-    path('japan_box', GetJapanBoxView.as_view(), name='api_japan_box'),
+    path('japan_box', GetJapanBoxApi.as_view(), name='get_japan_box'),
+    path('update', UpdateBoxApi.as_view(), name='update_japan_box')
 ]
