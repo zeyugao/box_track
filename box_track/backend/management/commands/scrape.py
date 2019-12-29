@@ -9,6 +9,17 @@ import time
 import random
 
 
+def exception_handler(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(e)
+            return str(e)
+    return wrapper
+
+
+@exception_handler
 def main(no_delay):
     if not no_delay:
         time.sleep(random.randint(10, 300)+random.random())
@@ -19,7 +30,7 @@ def main(no_delay):
                            tzinfo=pytz.timezone('Japan'))
     if JapanBoxFull.objects.filter(update_time=update_time).exists():
         print(update_time, 'exists')
-        return
+        return str(update_time)+' '+'exists'
 
     for box_info in full_info:
         extra_info = {
@@ -46,6 +57,7 @@ def main(no_delay):
         store_time=now_time,
         full_info=full_info
     )
+    return 'Succeed'
 
 
 class Command(BaseCommand):
