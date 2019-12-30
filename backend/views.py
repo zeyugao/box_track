@@ -3,6 +3,7 @@ import json
 from collections import defaultdict
 
 import pytz
+from django.apps import apps
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -14,9 +15,11 @@ from backend.management.commands.scrape import main as scrape_japan
 from .models import JapanBox
 from _thread import start_new_thread
 import time
+from django.core import serializers
 import random
 
 last_state = ''
+
 
 def scrape_japan_with_delay(no_delay):
     global last_state
@@ -31,6 +34,33 @@ class UpdateBoxApi(View):
                          (int(request.GET.get('nodelay') or 0),))
         return JsonResponse({
             'last_state': last_state
+        })
+
+
+class DumpDataApi(View):
+    def get(self, request, *args, **kwargs):
+        dump_format = request.GET.get('format') or 'json'
+        if not dump_format in ['xml', 'json', 'yaml']:
+            return JsonResponse({
+                'msg': 'Unsupported dump format'
+            })
+        label = request.GET.get('app')
+        if not label:
+            return JsonResponse({
+                'msg': 'app label required'
+            })
+        try:
+            app_label, model_label = label.split('.')
+            app_config = apps.get_app_config(app_label)
+            model = app_config.get_model(model_label)
+        except Exception as e:
+            return JsonResponse({
+                'msg': str(e)
+            })
+
+        data = serializers.serialize(dump_format, model.objects.all())
+        return JsonResponse({
+            'data': data
         })
 
 
