@@ -5,7 +5,7 @@ from collections import defaultdict
 import pytz
 from django.apps import apps
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -59,9 +59,13 @@ class DumpDataApi(View):
             })
 
         data = serializers.serialize(dump_format, model.objects.all())
-        return JsonResponse({
-            'data': data
-        })
+
+        resp = HttpResponse(data.encode())
+        resp['Content-Type'] = 'text/plain'
+        resp['Content-Disposition'] = 'attachment; filename="%s"' % (
+            label+'.json')
+
+        return resp
 
 
 @method_decorator(csrf_exempt, name='dispatch')
