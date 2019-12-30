@@ -33,7 +33,8 @@ class UpdateBoxApi(View):
         start_new_thread(scrape_japan_with_delay,
                          (int(request.GET.get('nodelay') or 0),))
         return JsonResponse({
-            'last_state': last_state
+            #'last_state': last_state
+            'last_state': 'Normal'
         })
 
 
