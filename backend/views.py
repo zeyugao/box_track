@@ -79,7 +79,7 @@ class GetJapanBoxApi(View):
             })
         now = timezone.now()
         query = JapanBox.objects \
-            .filter(update_time__gt=datetime.datetime(now.year, now.month, now.day, tzinfo=pytz.timezone('UTC')))\
+            .filter(update_time__gt=datetime.datetime(now.year, now.month, now.day, tzinfo=pytz.timezone('Japan')))\
 
         if post_data.get('name'):
             query_filter = None
