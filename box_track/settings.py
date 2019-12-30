@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '0y34cq11kqg)8(8x3r@7@irii0f%!cyl574yb9zmzyk1+h876y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True if os.environ.get('DEBUG') else False
 
 ALLOWED_HOSTS = ['secure-refuge-38912.herokuapp.com',
                  'frozen.elsagranger.tk', 'localhost']

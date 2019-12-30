@@ -98,6 +98,8 @@ class GetJapanBoxApi(View):
                 'data': []
             })
 
+        query = query.order_by('update_time')
+
         resp = defaultdict(list)
         names = set()
         for box in query:
