@@ -63,10 +63,7 @@ var exists_time = [];
 var movie_data = {};
 var update_chart = function (names) {
     document.getElementById('refresh').innerText = "Loading";
-    axios.post("/api/japan_box", 
-        Qs.stringify({
-            name: names 
-        }))
+    axios.post("/api/japan_box", { name: names })
         .then(function (resp) {
             var color_count = 0;
             var new_datasets = {};
