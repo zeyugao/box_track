@@ -18,7 +18,7 @@ import time
 from django.core import serializers
 import random
 
-last_state = ''
+last_state = 'Succeed'
 
 
 def scrape_japan_with_delay(no_delay):
@@ -33,8 +33,7 @@ class UpdateBoxApi(View):
         start_new_thread(scrape_japan_with_delay,
                          (int(request.GET.get('nodelay') or 0),))
         return JsonResponse({
-            #'last_state': last_state
-            'last_state': 'Normal'
+            'last_state': last_state
         })
 
 
