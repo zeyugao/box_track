@@ -17,26 +17,17 @@ from django.views.decorators.csrf import csrf_exempt
 
 from _thread import start_new_thread
 from backend.management.commands.japan import scrape as scrape_japan
+from backend.management.commands.maoyan import scrape as scrape_maoyan
 
 from .models import JapanBox
-
-last_state = 'Succeed'
-
-
-def scrape_japan_with_delay(no_delay):
-    global last_state
-    last_state = scrape_japan(no_delay)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class UpdateBoxApi(View):
     def get(self, request, *args, **kwargs):
-        global last_state
-        start_new_thread(scrape_japan_with_delay,
-                         (int(request.GET.get('nodelay') or 0),))
-        return JsonResponse({
-            'last_state': last_state
-        })
+        start_new_thread(scrape_japan, (int(request.GET.get('nodelay') or 0),))
+        start_new_thread(scrape_maoyan, ())
+        return HttpResponse('done')
 
 
 class DumpDataApi(View):
@@ -81,7 +72,7 @@ class GetJapanBoxApi(View):
             })
         now = timezone.now()
         query = JapanBox.objects \
-            .filter(update_time__gt=datetime.datetime(now.year, now.month, now.day, tzinfo=pytz.timezone('Japan')))\
+            .filter(update_time__gt=datetime.datetime(now.year, now.month, now.day, tzinfo=pytz.timezone('Japan')))
 
         if post_data.get('name'):
             query_filter = None
