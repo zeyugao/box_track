@@ -1,22 +1,24 @@
 import datetime
 import json
+import random
+import time
 from collections import defaultdict
 
 import pytz
 from django.apps import apps
+from django.core import serializers
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from backend.management.commands.scrape import main as scrape_japan
-from .models import JapanBox
+
 from _thread import start_new_thread
-import time
-from django.core import serializers
-import random
+from backend.management.commands.japan import scrape as scrape_japan
+
+from .models import JapanBox
 
 last_state = ''
 
