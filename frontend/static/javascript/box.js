@@ -58,11 +58,19 @@ var config = {
         }
     }
 };
+
+var show_modal = function () {
+    $("#loading_modal").modal("show");
+}
+var close_modal = function () {
+    setTimeout(function () { $('#loading_modal').modal('hide') }, 100)
+}
+
 var colorNames = Object.keys(window.chartColors);
 var exists_time = [];
 var movie_data = {};
 var update_chart = function (names) {
-    document.getElementById('refresh').innerText = "Loading";
+    show_modal();
     axios.post("/api/japan_box", { name: names })
         .then(function (resp) {
             var color_count = 0;
@@ -87,7 +95,6 @@ var update_chart = function (names) {
             for (var key in box) {
                 if (exists_time.indexOf(key) == -1) {
                     new_exists_time.push(key);
-                    //console.log(movie.name);
                     box[key].forEach(movie => movie_data[movie.name].push({ x: moment(key), y: movie.sale }));
                 }
             }
@@ -106,7 +113,7 @@ var update_chart = function (names) {
             }
 
             window.chart.update();
-            document.getElementById('refresh').innerText = "Refresh";
+            close_modal();
         })
 };
 var update_chart_wrapper = function () {

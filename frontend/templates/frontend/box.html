@@ -4,9 +4,10 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>Frozen II Box</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-    
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.1/qs.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
@@ -25,6 +26,26 @@
 </head>
 
 <body>
+    <div class="modal fade" id="loading_modal" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body" id="modal_body">
+                    <div class="container" id="modal_body_container">
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="spinner-border" role="status"></div>
+                            </div>
+                            <div class="col-sm">
+                                <span class="align-middle">Loading...</span>
+                            </div>
+                            <div class="col-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="row justify-content-center">
             <div style="width:100%;">
@@ -36,4 +57,5 @@
         </div>
     </div>
 </body>
+
 </html>
