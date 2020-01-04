@@ -5,6 +5,8 @@ import time
 from collections import defaultdict
 
 import pytz
+import requests
+from bs4 import BeautifulSoup
 from django.apps import apps
 from django.core import serializers
 from django.db.models import Q
@@ -113,3 +115,17 @@ class GetJapanBoxApi(View):
                 resp,
             ]
         })
+
+
+class AnimatedBoxOffice(View):
+    def get(self, request, *args, **kwargs):
+        resp = requests.get(('https://www.the-numbers.com/box-office-records/'
+                             'worldwide/all-movies/cumulative/all-time-animated'))
+        soup = BeautifulSoup(resp.text, features="html.parser")
+        http = '''<html>
+<body>
+%s
+</body>
+</html>
+'''
+        return HttpResponse(http % str(soup.find('div', attrs={'id': 'main'}).find('center')))

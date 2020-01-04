@@ -2,3 +2,4 @@ django
 gunicorn
 requests
 django-cors-headers
+beautifulsoup4
