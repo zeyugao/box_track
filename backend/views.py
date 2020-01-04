@@ -124,8 +124,15 @@ class AnimatedBoxOffice(View):
         soup = BeautifulSoup(resp.text, features="html.parser")
         http = '''<html>
 <body>
+<table>
+<tbody>
 %s
+</tbody>
+</table>
 </body>
 </html>
 '''
-        return HttpResponse(http % str(soup.find('div', attrs={'id': 'main'}).find('center')))
+        all_list = soup.find('div', attrs={'id': 'main'}).find('center')
+        tbody = all_list.find('tbody')
+        top_two = tbody.find_all('tr')[:2]
+        return HttpResponse(http % ''.join(map(str, top_two)))
