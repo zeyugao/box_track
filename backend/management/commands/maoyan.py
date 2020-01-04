@@ -58,27 +58,27 @@ def scrape():
     update_time = datetime(utc_now.year, utc_now.month, utc_now.day,
                            utc_hour, int(mintue), int(second), tzinfo=pytz.timezone('UTC'))
 
-    for movie in full_info['list']:
-        movie_info = {
-            key: fix_type[key](movie[key])
-            for key in [
-                'avgSeatView',
-                'avgShowView',
-                'avgViewBox',
-                'boxInfo',
-                'boxRate',
-                'movieId',
-                'movieName',
-                'seatRate',
-                'showInfo',
-                'showRate',
-                'sumBoxInfo',
-                'viewInfo',
-                'viewInfoV2',
-            ]
-        }
-        Maoyan.objects.create(update_time=update_time,
-                              **movie_info)
+    # for movie in full_info['list']:
+    #    movie_info = {
+    #        key: fix_type[key](movie[key])
+    #        for key in [
+    #            'avgSeatView',
+    #            'avgShowView',
+    #            'avgViewBox',
+    #            'boxInfo',
+    #            'boxRate',
+    #            'movieId',
+    #            'movieName',
+    #            'seatRate',
+    #            'showInfo',
+    #            'showRate',
+    #            'sumBoxInfo',
+    #            'viewInfo',
+    #            'viewInfoV2',
+    #        ]
+    #    }
+    #    Maoyan.objects.create(update_time=update_time,
+    #                          **movie_info)
 
     MaoyanFull.objects.create(update_time=update_time, full_info=full_info)
 
