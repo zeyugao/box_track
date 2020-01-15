@@ -68,8 +68,6 @@ class GetJapanBoxApi(View):
         end_datetime = datetime.strptime(request.POST['end'], date_format)
         query = JapanBoxFull.objects.filter(update_time__gte=start_datetime).filter(update_time__lte=end_datetime)
         query = query.order_by('update_time')
-        print(start_datetime)
-        print(end_datetime)
 
         result = defaultdict(list)
         names = set()
@@ -80,7 +78,7 @@ class GetJapanBoxApi(View):
                         result[str(obj.update_time)].append({
                             'name': info[-1],
                             'sale': info[1],
-                            'rate': info[4]
+                            'rate': (float(info[5]) or 0) / 100
                         })
                         names.add(info[-1])
                         break

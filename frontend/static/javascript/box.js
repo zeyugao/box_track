@@ -15,6 +15,8 @@ var config = {
     data: JSON.parse(JSON.stringify(default_data)),
     options: {
         responsive: true,
+        hoverMode: 'index',
+        stacked: false,
         title: {
             display: true,
             text: 'Box in Japan'
@@ -48,13 +50,40 @@ var config = {
                     "unit": "hour"
                 }
             }],
-            y: {
+            yAxes: [
+                {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    id: 'sale',
+                },
+                {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    id: 'rate',
+                    ticks: {
+                        suggestedMax: 1.00,
+                        suggestedMin: 0.00
+                    }
+                },
+            ],/*
+            sale: {
                 display: true,
                 scaleLabel: {
                     display: true,
                     labelString: 'Sale'
+                },
+                position: 'left',
+            },
+            rate: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                gridLines: {
+                    drawOnChartArea: false,
                 }
-            }
+            }*/
         }
     }
 };
@@ -93,9 +122,12 @@ function update_chart(names, day_offset = 0) {
             var color_count = 0;
             var new_datasets = {};
             resp.names.forEach(function (item, _index) {
-                var new_color = window.chartColors[colorNames[color_count % colorNames.length]];
+                let new_color = window.chartColors[colorNames[color_count % colorNames.length]];
                 if (movie_data[item] === undefined) {
                     movie_data[item] = [];
+                }
+                if (movie_data[item + 'rate'] === undefined) {
+                    movie_data[item + 'rate'] = [];
                 }
                 new_datasets[item] = {
                     label: item,
@@ -104,6 +136,18 @@ function update_chart(names, day_offset = 0) {
                     data: movie_data[item],
                     fill: false,
                     lineTension: 0,
+                    yAxisID: 'sale'
+                };
+                color_count++;
+                new_color = window.chartColors[colorNames[color_count % colorNames.length]];
+                new_datasets[item + 'rate'] = {
+                    label: item + ' Rate',
+                    backgroundColor: new_color,
+                    borderColor: new_color,
+                    data: movie_data[item + 'rate'],
+                    fill: false,
+                    //lineTension: 0,
+                    yAxisID: 'rate',
                 };
                 color_count++;
             });
@@ -112,7 +156,10 @@ function update_chart(names, day_offset = 0) {
             for (var key in box) {
                 if (exists_time.indexOf(key) === -1) {
                     new_exists_time.push(key);
-                    box[key].forEach(movie => movie_data[movie.name].push({x: moment(key), y: movie.sale}));
+                    box[key].forEach(function (movie) {
+                        movie_data[movie.name].push({x: moment(key), y: movie.sale});
+                        movie_data[movie.name + 'rate'].push({x: moment(key), y: movie.rate});
+                    });
                 }
             }
             exists_time = exists_time.concat(new_exists_time);
@@ -128,6 +175,7 @@ function update_chart(names, day_offset = 0) {
                     config.data.datasets.push(new_datasets[key]);
                 }
             }
+            console.log(config.data.datasets);
             close_modal();
             window.chart.update();
         })
@@ -137,10 +185,10 @@ function update_chart(names, day_offset = 0) {
                 show_toast('Error', resp.responseText, 'red')
             }, 2000);
         })
-};
+}
 
 function update_chart_wrapper() {
-    update_chart(["アナと雪の女王２", "スター・ウォーズ スカイウ"]);
+    update_chart(["アナと雪の女王２"]);//, "スター・ウォーズ スカイウ"]);
 }
 
 window.onload = function () {
