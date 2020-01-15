@@ -9,7 +9,7 @@ window.chartColors = {
 };
 var default_data = {
     datasets: []
-}
+};
 var config = {
     type: 'line',
     data: JSON.parse(JSON.stringify(default_data)),
@@ -59,26 +59,43 @@ var config = {
     }
 };
 
-var show_modal = function () {
+function show_modal() {
     $("#loading_modal").modal("show");
 }
-var close_modal = function () {
-    setTimeout(function () { $('#loading_modal').modal('hide') }, 100)
+
+function close_modal() {
+    setTimeout(function () {
+        $('#loading_modal').modal('hide')
+    }, 500)
 }
 
 var colorNames = Object.keys(window.chartColors);
 var exists_time = [];
 var movie_data = {};
-var update_chart = function (names) {
+
+function update_chart(names, day_offset = 0) {
     show_modal();
-    axios.post("/api/japan_box", { name: names })
-        .then(function (resp) {
+    const d = new Date();
+    let date = d.getUTCDate(), month = d.getUTCMonth(), year = d.getUTCFullYear(),
+        utc_day_start = Date.UTC(year, month, date, 0, 0, 0, 0);
+
+    var japan_day_start = moment(new Date(utc_day_start - 9 * 3600 * 1000));
+    japan_day_start.add(day_offset, 'days');
+    var japan_day_end = moment(new Date(utc_day_start - 9 * 3600 * 1000));
+    japan_day_end.add(day_offset + 1, 'days');
+    let datetime_format = 'YYYY/MM/DD HH:mm:ssZZ';
+    $.post('/api/japan_box', {
+            start: japan_day_start.format(datetime_format),
+            end: japan_day_end.format(datetime_format),
+            name: names
+        },
+        function (resp) {
             var color_count = 0;
             var new_datasets = {};
-            names.forEach(function (item, _index) {
+            resp.names.forEach(function (item, _index) {
                 var new_color = window.chartColors[colorNames[color_count % colorNames.length]];
                 if (movie_data[item] === undefined) {
-                    movie_data[item] = []
+                    movie_data[item] = [];
                 }
                 new_datasets[item] = {
                     label: item,
@@ -89,20 +106,20 @@ var update_chart = function (names) {
                     lineTension: 0,
                 };
                 color_count++;
-            })
-            var box = resp.data.data[0];
-            new_exists_time = []
+            });
+            var box = resp.data[0];
+            new_exists_time = [];
             for (var key in box) {
-                if (exists_time.indexOf(key) == -1) {
+                if (exists_time.indexOf(key) === -1) {
                     new_exists_time.push(key);
-                    box[key].forEach(movie => movie_data[movie.name].push({ x: moment(key), y: movie.sale }));
+                    box[key].forEach(movie => movie_data[movie.name].push({x: moment(key), y: movie.sale}));
                 }
             }
             exists_time = exists_time.concat(new_exists_time);
             for (var key in new_datasets) {
-                var found = false;
+                let found = false;
                 for (var d in config.data.datasets) {
-                    if (config.data.datasets[d].label == key) {
+                    if (config.data.datasets[d].label === key) {
                         found = true;
                         break;
                     }
@@ -111,16 +128,23 @@ var update_chart = function (names) {
                     config.data.datasets.push(new_datasets[key]);
                 }
             }
-
-            window.chart.update();
             close_modal();
+            window.chart.update();
+        })
+        .fail(function (resp) {
+            close_modal();
+            setTimeout(function () {
+                show_toast('Error', resp.responseText, 'red')
+            }, 2000);
         })
 };
-var update_chart_wrapper = function () {
-    update_chart(["アナと雪の女王２", "スター・ウォーズ スカイウォ…"]);
+
+function update_chart_wrapper() {
+    update_chart(["アナと雪の女王２", "スター・ウォーズ スカイウ"]);
 }
+
 window.onload = function () {
-    var ctx = document.getElementById('canvas').getContext('2d');
+    const ctx = document.getElementById('canvas').getContext('2d');
     window.chart = new Chart(ctx, config);
     update_chart_wrapper();
     document.getElementById('refresh').addEventListener('click', update_chart_wrapper);

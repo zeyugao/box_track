@@ -9,7 +9,6 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from backend.models import JapanBox, JapanBoxFull
-
 from .utils import exception_handler
 
 base_url = 'https://chu-mimorin.ssl-lolipop.jp/mimorin2014/rankinglist11.html'
@@ -52,17 +51,17 @@ def get_box():
 @exception_handler
 def scrape(no_delay):
     if not no_delay:
-        time.sleep(random.randint(10, 300)+random.random())
+        time.sleep(random.randint(10, 300) + random.random())
     update_time, full_info = get_box()
     if not full_info:
         raise ValueError('Failed to match the info')
-    year, month, day, hour, mintue = update_time[0]
+    year, month, day, hour, minute = update_time[0]
     now_time = timezone.now()
-    update_time = datetime(int(year), int(month), int(day), int(hour), int(mintue),
-                           tzinfo=pytz.timezone('Japan'))
+    japan_timezone = pytz.timezone('Japan')
+    update_time = japan_timezone.localize(datetime(int(year), int(month), int(day), int(hour), int(minute)))
     if JapanBoxFull.objects.filter(update_time=update_time).exists():
         print(update_time, 'exists')
-        return str(update_time)+' '+'exists'
+        return str(update_time) + ' ' + 'exists'
 
     for box_info in full_info:
         extra_info = {

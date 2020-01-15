@@ -1,27 +1,22 @@
 import datetime
-import json
-import random
-import time
+from _thread import start_new_thread
+from ast import literal_eval
 from collections import defaultdict
+from datetime import datetime
 
 import pytz
 import requests
 from bs4 import BeautifulSoup
 from django.apps import apps
 from django.core import serializers
-from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from _thread import start_new_thread
 from backend.management.commands.japan import scrape as scrape_japan
 from backend.management.commands.maoyan import scrape as scrape_maoyan
-
-from .models import JapanBox
+from .models import JapanBoxFull
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -35,7 +30,7 @@ class UpdateBoxApi(View):
 class DumpDataApi(View):
     def get(self, request, *args, **kwargs):
         dump_format = request.GET.get('format') or 'json'
-        if not dump_format in ['xml', 'json', 'yaml']:
+        if dump_format not in ['xml', 'json', 'yaml']:
             return JsonResponse({
                 'msg': 'Unsupported dump format'
             })
@@ -58,7 +53,7 @@ class DumpDataApi(View):
         resp = HttpResponse(data.encode())
         resp['Content-Type'] = 'text/plain'
         resp['Content-Disposition'] = 'attachment; filename="%s"' % (
-            label+'.json')
+                label + '.json')
 
         return resp
 
@@ -66,53 +61,34 @@ class DumpDataApi(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class GetJapanBoxApi(View):
     def post(self, request, *args, **kwargs):
-        try:
-            post_data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse(data={
-                'data': []
-            })
-        now = timezone.now()
-        query = JapanBox.objects \
-            .filter(update_time__gt=datetime.datetime(now.year, now.month, now.day, tzinfo=pytz.timezone('Japan')))
+        date_format = '%Y/%m/%d %H:%M:%S%z'
+        japan_timezone = pytz.timezone('Japan')
 
-        if post_data.get('name'):
-            query_filter = None
-            for q in post_data['name']:
-                if query_filter is None:
-                    query_filter = Q(name__startswith=q)
-                else:
-                    query_filter = query_filter | Q(name__startswith=q)
-            query = query.filter(query_filter)
-        elif post_data.get('rank'):
-            query_filter = None
-            for q in post_data['rank']:
-                if query_filter is None:
-                    query_filter = Q(rank=q)
-                else:
-                    query_filter = query_filter | Q(rank=q)
-            query = query.filter(query_filter)
-        else:
-            return JsonResponse(data={
-                'data': []
-            })
-
+        start_datetime = datetime.strptime(request.POST['start'], date_format)
+        end_datetime = datetime.strptime(request.POST['end'], date_format)
+        query = JapanBoxFull.objects.filter(update_time__gte=start_datetime).filter(update_time__lte=end_datetime)
         query = query.order_by('update_time')
+        print(start_datetime)
+        print(end_datetime)
 
-        resp = defaultdict(list)
+        result = defaultdict(list)
         names = set()
-        for box in query:
-            # resp['{0:%H:%M}'.format(box.update_time+datetime.timedelta(hours=9, minutes=19))].append({
-            resp[str(box.update_time)].append({
-                'name': box.name,
-                'sale': box.sale
-            })
-            names.add(box.name)
+        for obj in query:
+            for info in literal_eval(obj.full_info):
+                for part_name in request.POST.getlist('name[]'):
+                    if part_name in info[-1]:
+                        result[str(obj.update_time)].append({
+                            'name': info[-1],
+                            'sale': info[1],
+                            'rate': info[4]
+                        })
+                        names.add(info[-1])
+                        break
 
         return JsonResponse(data={
             'names': list(names),
             'data': [
-                resp,
+                result
             ]
         })
 

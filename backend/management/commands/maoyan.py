@@ -5,7 +5,8 @@ import pytz
 import requests
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from backend.models import Maoyan, MaoyanFull
+
+from backend.models import MaoyanFull
 from .utils import exception_handler
 
 fake_headers = {
@@ -53,11 +54,13 @@ def scrape():
     full_info = get_box()
     hour, mintue, second = full_info['updateInfo'].replace(
         '北京时间', '').strip().split(':')
-    utc_hour = (int(hour) - 8 + 24) % 24
-    utc_now = timezone.now()
-    update_time = datetime(utc_now.year, utc_now.month, utc_now.day,
-                           utc_hour, int(mintue), int(second), tzinfo=pytz.timezone('UTC'))
-
+    # utc_hour = (int(hour) - 8 + 24) % 24
+    # update_time = datetime(utc_now.year, utc_now.month, utc_now.day,
+    #                       utc_hour, int(mintue), int(second), tzinfo=pytz.timezone('UTC'))
+    shanghai_timezone = pytz.timezone('Asia/Shanghai')
+    shanghai_now = timezone.now().astimezone(shanghai_timezone)
+    update_time = shanghai_timezone.localize(
+        datetime(shanghai_now.year, shanghai_now.month, shanghai_now.day, int(hour), int(mintue), int(second)))
     # for movie in full_info['list']:
     #    movie_info = {
     #        key: fix_type[key](movie[key])
