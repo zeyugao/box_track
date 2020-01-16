@@ -20,32 +20,21 @@
 
 <body>
 {% include 'frontend/toast.html' %}
-<div class="modal fade" id="loading_modal" role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-body" id="modal_body">
-                <div class="container" id="modal_body_container">
-                    <div class="row">
-                        <div class="col-sm">
-                            <div class="spinner-border" role="status"></div>
-                        </div>
-                        <div class="col-sm">
-                            <span class="align-middle">Loading...</span>
-                        </div>
-                        <div class="col-sm">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'frontend/modal.html' %}
 <div class="container">
     <div class="row justify-content-center">
         <div style="width:100%;">
             <canvas id="canvas"></canvas>
         </div>
     </div>
+    <div class="row justify-content-end">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="display_rate" checked
+                   onclick="onclick_checkbox_display_rate();">
+            <label class="form-check-label" for="display_rate">Display rate</label>
+        </div>
+    </div>
+    <br/>
     <div class="row justify-content-end">
         <button class="btn btn-primary" type="button" id="refresh">Refresh</button>
     </div>
