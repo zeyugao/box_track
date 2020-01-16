@@ -144,14 +144,14 @@ function update_chart(names, day_offset = 0) {
                 };
                 if (display_rate) {
                     new_color = window.chartColors[colorNames[color_count % colorNames.length]];
-                    if (movie_data[item + 'rate'] === undefined) {
-                        movie_data[item + 'rate'] = [];
+                    if (movie_data[item + ' Rate'] === undefined) {
+                        movie_data[item + ' Rate'] = [];
                     }
-                    new_datasets[item + 'rate'] = {
+                    new_datasets[item + ' Rate'] = {
                         label: item + ' Rate',
                         backgroundColor: new_color,
                         borderColor: new_color,
-                        data: movie_data[item + 'rate'],
+                        data: movie_data[item + ' Rate'],
                         fill: false,
                         //lineTension: 0,
                         borderDash: [5, 5],
@@ -168,7 +168,7 @@ function update_chart(names, day_offset = 0) {
                     box[key].forEach(function (movie) {
                         movie_data[movie.name].push({x: moment(key), y: movie.sale});
                         if (display_rate)
-                            movie_data[movie.name + 'rate'].push({x: moment(key), y: movie.rate});
+                            movie_data[movie.name + ' Rate'].push({x: moment(key), y: movie.rate});
                     });
                 }
             }
