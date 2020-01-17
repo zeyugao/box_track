@@ -85,9 +85,7 @@ class GetJapanBoxApi(View):
 
         return JsonResponse(data={
             'names': list(names),
-            'data': [
-                result
-            ]
+            'data': result
         })
 
 

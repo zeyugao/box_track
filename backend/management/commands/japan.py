@@ -8,7 +8,7 @@ import requests
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from backend.models import JapanBox, JapanBoxFull
+from backend.models import JapanBoxFull
 from .utils import exception_handler
 
 base_url = 'https://chu-mimorin.ssl-lolipop.jp/mimorin2014/rankinglist11.html'
@@ -63,6 +63,7 @@ def scrape(no_delay):
         print(update_time, 'exists')
         return str(update_time) + ' ' + 'exists'
 
+    '''
     for box_info in full_info:
         extra_info = {
             desp: box_info[i] or -1
@@ -83,6 +84,7 @@ def scrape(no_delay):
             update_time=update_time,
             **extra_info
         )
+    '''
     JapanBoxFull.objects.create(
         update_time=update_time,
         store_time=now_time,

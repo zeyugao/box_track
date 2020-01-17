@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 
-
+'''
 class JapanBox(models.Model):
     update_time = models.DateTimeField()
     rank = models.IntegerField()
@@ -14,6 +14,7 @@ class JapanBox(models.Model):
     rate_95 = models.FloatField()
     estimation = models.IntegerField()
     name = models.CharField(max_length=127)
+'''
 
 
 class JapanBoxFull(models.Model):
@@ -23,6 +24,7 @@ class JapanBoxFull(models.Model):
     store_time = models.DateTimeField()
 
 
+'''
 class Maoyan(models.Model):
     update_time = models.DateTimeField()
     avgSeatView = models.FloatField()  # 上座率
@@ -38,6 +40,8 @@ class Maoyan(models.Model):
     sumBoxInfo = models.CharField(max_length=31)  # 总票房
     viewInfo = models.FloatField()  # 人次
     viewInfoV2 = models.CharField(max_length=31)
+'''
+
 
 class MaoyanFull(models.Model):
     update_time = models.DateTimeField()
