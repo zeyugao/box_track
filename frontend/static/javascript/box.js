@@ -109,8 +109,16 @@ var colorNames = Object.keys(window.chartColors);
 var exists_time = [];
 var movie_data = {};
 
-function update_chart(names, day_offset = 0) {
-    show_modal();
+function change_day_offset(new_day_offset) {
+    day_offset += new_day_offset;
+    window.chart.config.data = JSON.parse(JSON.stringify(default_data));
+    window.chart.update();
+    movie_data = {};
+    exists_time = [];
+    update_chart(expected_movie_name, day_offset);
+}
+
+function get_datetime(day_offset) {
     const d = new Date();
     let date = d.getUTCDate(), month = d.getUTCMonth(), year = d.getUTCFullYear(),
         utc_day_start = Date.UTC(year, month, date, 0, 0, 0, 0);
@@ -119,6 +127,13 @@ function update_chart(names, day_offset = 0) {
     japan_day_start.add(day_offset, 'days');
     var japan_day_end = moment(new Date(utc_day_start - 9 * 3600 * 1000));
     japan_day_end.add(day_offset + 1, 'days');
+    return [japan_day_start, japan_day_end];
+}
+
+function update_chart(names, day_offset = 0) {
+    show_modal();
+    const [japan_day_start, japan_day_end] = get_datetime(day_offset);
+
     let datetime_format = 'YYYY/MM/DD HH:mm:ssZZ';
     $.post('/api/japan_box', {
             start: japan_day_start.format(datetime_format),
@@ -160,7 +175,7 @@ function update_chart(names, day_offset = 0) {
                 }
                 color_count++;
             });
-            var box = resp.data[0];
+            var box = resp.data;
             new_exists_time = [];
             for (var key in box) {
                 if (exists_time.indexOf(key) === -1) {
@@ -185,6 +200,8 @@ function update_chart(names, day_offset = 0) {
                     config.data.datasets.push(new_datasets[key]);
                 }
             }
+            $("#datetime_range_start").text(japan_day_start.format(datetime_format));
+            $("#datetime_range_end").text(japan_day_end.format(datetime_format));
             close_modal();
             window.chart.update();
         })
