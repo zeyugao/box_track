@@ -128,8 +128,17 @@ function set_today() {
     change_day_offset(-day_offset);
 }
 
+function fix_next_day_button() {
+    if (day_offset >= 0) {
+        $("#next_day").attr("disabled", true);
+    } else {
+        $("#next_day").attr("disabled", false);
+    }
+}
+
 function change_day_offset(new_day_offset) {
     day_offset += new_day_offset;
+    fix_next_day_button();
     window.chart.config.data = JSON.parse(JSON.stringify(default_data));
     window.chart.update();
     movie_data = {};
@@ -244,6 +253,7 @@ function update_chart_wrapper() {
 window.onload = function () {
     const ctx = document.getElementById('canvas').getContext('2d');
     window.chart = new Chart(ctx, config);
+    fix_next_day_button();
     update_chart_wrapper();
     document.getElementById('refresh').addEventListener('click', update_chart_wrapper);
 };
