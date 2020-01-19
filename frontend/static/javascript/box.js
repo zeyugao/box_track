@@ -109,6 +109,10 @@ var colorNames = Object.keys(window.chartColors);
 var exists_time = [];
 var movie_data = {};
 
+function set_today() {
+    change_day_offset(-day_offset);
+}
+
 function change_day_offset(new_day_offset) {
     day_offset += new_day_offset;
     window.chart.config.data = JSON.parse(JSON.stringify(default_data));
@@ -135,7 +139,7 @@ function update_chart(names, day_offset = 0) {
     const [japan_day_start, japan_day_end] = get_datetime(day_offset);
 
     let datetime_format = 'YYYY/MM/DD HH:mm:ssZZ';
-    $.post('/api/japan_box', {
+    $.get('/api/japan_box', {
             start: japan_day_start.format(datetime_format),
             end: japan_day_end.format(datetime_format),
             name: names

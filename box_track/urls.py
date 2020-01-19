@@ -17,6 +17,6 @@ from django.urls import include
 from django.urls import path
 
 urlpatterns = [
-    path('box/', include('frontend.urls')),
+    path('', include('frontend.urls')),
     path('api/', include('backend.urls')),
 ]

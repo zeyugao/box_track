@@ -4,7 +4,6 @@ from ast import literal_eval
 from collections import defaultdict
 from datetime import datetime
 
-import pytz
 import requests
 from bs4 import BeautifulSoup
 from django.apps import apps
@@ -59,13 +58,9 @@ class DumpDataApi(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class GetJapanBoxApi(View):
-    def post(self, request, *args, **kwargs):
-        date_format = '%Y/%m/%d %H:%M:%S%z'
-        japan_timezone = pytz.timezone('Japan')
-
-        start_datetime = datetime.strptime(request.POST['start'], date_format)
-        end_datetime = datetime.strptime(request.POST['end'], date_format)
+class GetJapanBox(View):
+    @staticmethod
+    def get_box(query_names, start_datetime, end_datetime):
         query = JapanBoxFull.objects.filter(update_time__gte=start_datetime).filter(update_time__lte=end_datetime)
         query = query.order_by('update_time')
 
@@ -73,7 +68,7 @@ class GetJapanBoxApi(View):
         names = set()
         for obj in query:
             for info in literal_eval(obj.full_info):
-                for part_name in request.POST.getlist('name[]'):
+                for part_name in query_names:
                     if part_name in info[-1]:
                         result[str(obj.update_time)].append({
                             'name': info[-1],
@@ -82,6 +77,15 @@ class GetJapanBoxApi(View):
                         })
                         names.add(info[-1])
                         break
+        return names, result
+
+    def get(self, request):
+        date_format = '%Y/%m/%d %H:%M:%S%z'
+
+        start_datetime = datetime.strptime(request.GET['start'], date_format)
+        end_datetime = datetime.strptime(request.GET['end'], date_format)
+
+        names, result = self.get_box(request.GET.getlist('name[]'), start_datetime, end_datetime)
 
         return JsonResponse(data={
             'names': list(names),
