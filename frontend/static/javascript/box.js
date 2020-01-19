@@ -10,6 +10,40 @@ window.chartColors = {
 var default_data = {
     datasets: []
 };
+
+var yAxes_with_right = [
+    {
+        type: 'linear',
+        display: true,
+        position: 'left',
+        id: 'sale',
+        ticks: {
+            suggestedMin: 0.00
+        }
+    },
+    {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        id: 'rate',
+        ticks: {
+            suggestedMin: 0.00
+        }
+    },
+];
+
+var yAxes_without_right = [
+    {
+        type: 'linear',
+        display: true,
+        position: 'left',
+        id: 'sale',
+        ticks: {
+            suggestedMin: 0.00
+        }
+    }
+];
+
 var config = {
     type: 'line',
     data: JSON.parse(JSON.stringify(default_data)),
@@ -50,26 +84,7 @@ var config = {
                     "unit": "hour"
                 }
             }],
-            yAxes: [
-                {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    id: 'sale',
-                    ticks: {
-                        suggestedMin: 0.00
-                    }
-                },
-                {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    id: 'rate',
-                    ticks: {
-                        suggestedMin: 0.00
-                    }
-                },
-            ],
+            yAxes: [],
         }
     }
 };
@@ -147,6 +162,11 @@ function update_chart(names, day_offset = 0) {
         function (resp) {
             var color_count = 0;
             var new_datasets = {};
+            if (display_rate) {
+                config.options.scales.yAxes = yAxes_with_right;
+            } else {
+                config.options.scales.yAxes = yAxes_without_right;
+            }
             resp.names.forEach(function (item, _index) {
                 let new_color = window.chartColors[colorNames[color_count % colorNames.length]];
                 if (movie_data[item] === undefined) {
