@@ -31,12 +31,22 @@ def get_total_days():
     return len(soup.find_all('tr')) - 1
 
 
+dory_total = 486295561
+hunger_total = 424668047
+frozen_total = 400738009
+
 text = '''在%s
 冰2 北美 %s，Total %s
+
 同期
-多莉 %s，Total %s，同期差距 %s，%s %s
-饥饿游戏2 %s，冰2为其 %s 倍，Total %s
-冰1 %s，Total %s
+多莉 %s，Total %s。同期差距 %s。%s差距 %s。
+多莉余量 %s
+
+饥饿游戏2 %s，冰2为其 %s 倍，Total %s。
+饥饿游戏余量 %s
+
+冰1 %s，Total %s。
+冰1余量 %s
 '''
 
 
@@ -72,23 +82,27 @@ def scrape(day_start=None, day_end=None, day_offset=None):
     else:
         day_start = day_end = get_total_days()
     frozen = parse('https://www.boxofficemojo.com/release/rl357926401', day_start, day_end)
-    print(frozen)
     frozen2 = parse('https://www.boxofficemojo.com/release/rl2424210945', day_start, day_end)
-    print(frozen2)
     hunger_game2 = parse('https://www.boxofficemojo.com/release/rl2638775809', day_start, day_end)
-    print(hunger_game2)
     finding_dory = parse('https://www.boxofficemojo.com/release/rl3764946433', day_start, day_end)
-    print(finding_dory)
 
     locale.setlocale(locale.LC_ALL, 'en_US.utf-8')
     # format_money = partial(locale.currency, grouping=True)
     resp = text % (
+        # First line, day
         '第%d天' % day_start if day_start == day_end else '第%d到第%d天' % (day_start, day_end),
+        # Second line, Frozen II
         format_money(frozen2[0]), format_money(frozen2[1]),
+        # Third line, Finding Dory
         format_money(finding_dory[0]), format_money(finding_dory[1]), format_money(finding_dory[1] - frozen2[1]),
         '减小' if frozen2[0] > finding_dory[0] else '增大', format_money(int(math.fabs(frozen2[0] - finding_dory[0]))),
+        format_money(dory_total - finding_dory[1]),
+        # Forth line, Hunger Game 2
         format_money(hunger_game2[0]), str('%.2f' % (frozen2[0] / hunger_game2[0])), format_money(hunger_game2[1]),
-        format_money(frozen[0]), format_money(frozen[1])
+        format_money(hunger_total - hunger_game2[1]),
+        # Fifth line, Frozen
+        format_money(frozen[0]), format_money(frozen[1]),
+        format_money(frozen_total - frozen[1]),
     )
     return resp
 
