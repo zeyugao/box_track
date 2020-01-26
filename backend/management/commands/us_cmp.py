@@ -49,6 +49,22 @@ text = '''在%s
 冰1余量 %s
 '''
 
+text_as_html = '''<html>
+<body>
+<p>在%s</p>
+<p>冰2 北美 %s，Total %s</p>
+<br />
+<p>同期</p>
+<p>多莉 %s，Total %s。同期差距 %s。%s差距 %s。</p>
+<p>多莉余量 %s</p>
+<br />
+<p>饥饿游戏2 %s，冰2为其 %s 倍，Total %s。</p>
+<p>饥饿游戏余量 %s</p>
+<br />
+<p>冰1 %s，Total %s。</p>
+<p>冰1余量 %s</p>
+</body>
+</html>'''
 
 def format_money(money):
     money = int(money)
@@ -62,7 +78,7 @@ def format_money(money):
         return '$%.2fB' % (money / 1e9)
 
 
-def scrape(day_start=None, day_end=None, day_offset=None):
+def scrape(day_start=None, day_end=None, day_offset=None, as_html=False):
     if not day_start and not day_end and not day_offset:
         day_start = day_end = get_total_days()
     elif day_start and day_end:
@@ -88,7 +104,7 @@ def scrape(day_start=None, day_end=None, day_offset=None):
 
     locale.setlocale(locale.LC_ALL, 'en_US.utf-8')
     # format_money = partial(locale.currency, grouping=True)
-    resp = text % (
+    resp = (text_as_html if as_html else text) % (
         # First line, day
         '第%d天' % day_start if day_start == day_end else '第%d到第%d天' % (day_start, day_end),
         # Second line, Frozen II

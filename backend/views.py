@@ -131,5 +131,5 @@ class USCompareView(View):
         daystart = request.GET.get('daystart')
         dayend = request.GET.get('dayend')
         dayoffset = request.GET.get('dayoffset')
-        resp = us_cmp(daystart, dayend, dayoffset)
+        resp = us_cmp(daystart, dayend, dayoffset, True)
         return HttpResponse(resp)
