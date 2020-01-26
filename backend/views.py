@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from backend.management.commands.japan import scrape as scrape_japan
 from backend.management.commands.maoyan import scrape as scrape_maoyan
+from backend.management.commands.us_cmp import scrape as us_cmp
 from .models import JapanBoxFull
 
 
@@ -93,6 +94,17 @@ class GetJapanBox(View):
         })
 
 
+class Top10Movie(View):
+    def get(self, request):
+        latest = literal_eval(JapanBoxFull.objects.last().full_info)
+        names = set()
+        for movie in latest:
+            names.add(movie[-1])
+        return JsonResponse({
+            'names': list(names)
+        })
+
+
 class AnimatedBoxOffice(View):
     def get(self, request, *args, **kwargs):
         resp = requests.get(('https://www.the-numbers.com/box-office-records/'
@@ -112,3 +124,12 @@ class AnimatedBoxOffice(View):
         tbody = all_list.find('tbody')
         top_two = tbody.find_all('tr')[:2]
         return HttpResponse(http % ''.join(map(str, top_two)))
+
+
+class USCompareView(View):
+    def get(self, request):
+        daystart = request.GET.get('daystart')
+        dayend = request.GET.get('dayend')
+        dayoffset = request.GET.get('dayoffset')
+        resp = us_cmp(daystart, dayend, dayoffset)
+        return HttpResponse(resp)
