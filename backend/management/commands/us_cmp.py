@@ -118,7 +118,7 @@ def scrape(day_start=None, day_end=None, day_offset=None, as_html=False):
 
     if as_html:
         content = '<html>\n<body>\n' + ''.join(
-            ['<p>%s</p>\n' % line if line else '<br />' for line in text.split('\n')]) + '</body></html>'
+            ['<p>%s</p>\n' % line if line else '<br>\n' for line in text.split('\n')]) + '</body></html>'
     else:
         content = text
 
