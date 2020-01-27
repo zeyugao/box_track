@@ -128,8 +128,14 @@ class AnimatedBoxOffice(View):
 
 class USCompareView(View):
     def get(self, request):
-        daystart = request.GET.get('daystart')
-        dayend = request.GET.get('dayend')
-        dayoffset = request.GET.get('dayoffset')
+        daystart = request.GET.get('start')
+        dayend = request.GET.get('end')
+        dayoffset = request.GET.get('offset')
+        if dayoffset:
+            dayoffset = int(dayoffset)
+        if daystart:
+            daystart = int(daystart)
+        if dayend:
+            dayend = int(dayend)
         resp = us_cmp(daystart, dayend, dayoffset, True)
         return HttpResponse(resp)
