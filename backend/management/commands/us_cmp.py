@@ -117,8 +117,8 @@ def scrape(day_start=None, day_end=None, day_offset=None, as_html=False):
     locale.setlocale(locale.LC_ALL, 'en_US.utf-8')
 
     if as_html:
-        content = '<html><body>' + ''.join(
-            ['<p>%s</p>' % line if line else '<br />' for line in text.split('\n')]) + '</body></html>'
+        content = '<html>\n<body>\n' + ''.join(
+            ['<p>%s</p>\n' % line if line else '<br />' for line in text.split('\n')]) + '</body></html>'
     else:
         content = text
 
