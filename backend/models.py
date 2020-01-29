@@ -47,3 +47,12 @@ class MaoyanFull(models.Model):
     update_time = models.DateTimeField()
 
     full_info = models.TextField()
+
+
+class BoxOfficeMojoDomestic(models.Model):
+    movie_name = models.CharField(max_length=127)
+    day = models.IntegerField()
+    daily = models.IntegerField()
+    DOW = models.IntegerField()
+    date = models.DateField()
+    to_date = models.IntegerField()
