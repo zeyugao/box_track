@@ -13,7 +13,7 @@ class USCompareView(TemplateView):
     template_name = 'frontend/us_cmp.html'
 
     dory_total = 486295561
-    hunger_total = 424668047
+    game_total = 424668047
     frozen_total = 400738009
 
     @staticmethod
@@ -129,7 +129,7 @@ class USCompareView(TemplateView):
             last_day = (datetime.strptime(a[0].text, '%b %d, %Y').date(), self.dow_map_reverse(self.dow_map(a[1].text)))
         return (int(days_total), int(total_stands), first_day, last_day, estimated), day_start, day_end
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         if request.GET.get('format') == '2':
             self.template_name = 'frontend/us_cmp2.html'
         return super().get(request)
@@ -162,19 +162,22 @@ class USCompareView(TemplateView):
             gap_frozen2_dory_more_or_less='减小' if frozen2[0] > dory[0] else '增大',
             gap_frozen2_dory_diff=self.format_money(int(math.fabs(frozen2[0] - dory[0]))),
             dory_remain=self.format_money(self.dory_total - dory[1]),
+            dory_total=self.format_money(self.dory_total),
 
             game_date=self.display_date(hunger_game[2], hunger_game[3]),
             game_date_of_week=self.display_date_of_week(hunger_game[2], hunger_game[3]),
             game_daily=self.format_money(hunger_game[0]),
             frozen2_times_game='%.2f' % (frozen2[0] / hunger_game[0]),
             game_total_due=self.format_money(hunger_game[1]),
-            game_remain=self.format_money(self.hunger_total - hunger_game[1]),
+            game_remain=self.format_money(self.game_total - hunger_game[1]),
+            game_total=self.format_money(self.game_total),
 
             frozen_date=self.display_date(frozen[2], frozen[3]),
             frozen_date_of_week=self.display_date_of_week(frozen[2], frozen[3]),
             frozen_daily=self.format_money(frozen[0]),
             frozen_total_due=self.format_money(frozen[1]),
             frozen_remain=self.format_money(self.frozen_total - frozen[1]),
+            frozen_total=self.format_money(self.frozen_total),
         )
 
         return context
