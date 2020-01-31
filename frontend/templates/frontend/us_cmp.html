@@ -14,28 +14,25 @@
 <body>
 <p>在{{ days_range }}</p>
 <h3>冰2</h3>
-<p>{{ frozen2_date }}; {{ frozen2_date_of_week }}</p>
+<p>{{ frozen2_date }}</p>
 <p>北美{{ estimated }} <span>{{ frozen2_daily }}</span>，Total <span>{{ frozen2_total_due }}</span></p>
-
-<p>------</p>
+<br>
 <p>同期</p>
 <h3>多莉</h3>
-<p>{{ dory_date }}; {{ dory_date_of_week }}</p>
+<p>{{ dory_date }}</p>
 <p>北美 {{ dory_daily }}，Total {{ dory_total_due }}。</p>
 <p>多莉余量 {{ dory_remain }}</p>
 <p>
     冰2和多莉同期差距 {{ gap_frozen2_dory }}。<span>{{ gap_frozen2_dory_more_or_less }}</span>差距<span> {{ gap_frozen2_dory_diff }}</span>。
 </p>
-<p>------</p>
-
+<br>
 <h3>饥饿游戏2</h3>
-<p>{{ game_date }}; {{ game_date_of_week }}</p>
+<p>{{ game_date }}</p>
 <p>北美 {{ game_daily }}，冰2为其 <span>{{ frozen2_times_game }}</span> 倍，Total {{ game_total_due }}。</p>
 <p>饥饿游戏余量 {{ game_remain }}</p>
-<p>------</p>
-
+<br>
 <h3>冰1</h3>
-<p>{{ frozen_date }}; {{ frozen_date_of_week }}</p>
+<p>{{ frozen_date }}</p>
 <p>北美 {{ frozen_daily }}，Total {{ frozen_total_due }}。</p>
 <p>冰1余量 {{ frozen_remain }}</p>
 </body>

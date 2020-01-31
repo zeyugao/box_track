@@ -1,5 +1,6 @@
 import math
 import re
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -16,15 +17,27 @@ class USCompareView(TemplateView):
     frozen_total = 400738009
 
     @staticmethod
+    def dow_map(dow: str):
+        return {
+            'Sunday': 0,
+            'Monday': 1,
+            'Tuesday': 2,
+            'Wednesday': 3,
+            'Thursday': 4,
+            'Friday': 5,
+            'Saturday': 6
+        }[dow]
+
+    @staticmethod
     def dow_map_reverse(dow: int):
         return [
-            'Sunday',
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday'
+            '星期天',
+            '星期一',
+            '星期二',
+            '星期三',
+            '星期四',
+            '星期五',
+            '星期六'
         ][dow]
 
     @staticmethod
@@ -41,11 +54,16 @@ class USCompareView(TemplateView):
 
     @staticmethod
     def display_date(start, end):
-        return start[0] if start[0] == end[0] else '从 %s 到 %s' % (start[0], end[0])
+        date_format = '%-m/%-d/%Y %a'
+
+        def f(date):
+            return date.strftime(date_format)
+
+        return f(start[0]) if start[0] == end[0] else '从 %s 到 %s' % (f(start[0]), f(end[0]))
 
     @staticmethod
     def display_date_of_week(start, end):
-        return start[1] if start[0] == end[0] else '第一天: %s, 最后一天: %s' % (start[1], end[1])
+        return start[1] if start[0] == end[0] else '第一天是%s, 最后一天是%s' % (start[1], end[1])
 
     @staticmethod
     def mojo_field_type_money_to_int(mojo_field):
@@ -73,17 +91,20 @@ class USCompareView(TemplateView):
         days = soup.find_all('tr')
 
         if day_start and day_end:
-            pass
+            day_start = int(day_start)
+            day_end = int(day_end)
         elif not day_start and not day_end:
             if not offset:
                 offset = 0
             day_end = len(days) - 1
-            day_start = day_end - offset
+            day_start = day_end - int(offset)
         elif not day_start or not day_end and offset:
-            if not day_start:
-                day_end = day_start + offset
+            if day_start:
+                day_start = int(day_start)
+                day_end = day_start + int(offset)
             else:
-                day_start = day_start - offset
+                day_end = int(day_end)
+                day_start = day_end - int(offset)
         else:
             day_start = day_end = len(days) - 1
 
@@ -102,8 +123,9 @@ class USCompareView(TemplateView):
 
             # Get date
             a = day.find_all('a')
-            first_day = first_day or (a[0].text, a[1].text)
-            last_day = (a[0].text, a[1].text)
+            first_day = first_day or (
+                datetime.strptime(a[0].text, '%b %d, %Y').date(), self.dow_map_reverse(self.dow_map(a[1].text)))
+            last_day = (datetime.strptime(a[0].text, '%b %d, %Y').date(), self.dow_map_reverse(self.dow_map(a[1].text)))
         return (int(days_total), int(total_stands), first_day, last_day, estimated), day_start, day_end
 
     def get_context_data(self, **kwargs):
