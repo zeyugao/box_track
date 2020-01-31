@@ -43,13 +43,14 @@ class USCompareView(TemplateView):
     @staticmethod
     def format_money(money):
         money = int(money)
-        if money < 1e3:
+        abs_money = math.fabs(money)
+        if abs_money < 1e3:
             return '$%d' % money
-        elif money < 1e6:
+        elif abs_money < 1e6:
             return '$%.2fK' % (money / 1e3)
-        elif money < 1e9:
+        elif abs_money < 1e9:
             return '$%.2fM' % (money / 1e6)
-        elif money < 1e12:
+        elif abs_money < 1e12:
             return '$%.2fB' % (money / 1e9)
 
     @staticmethod
@@ -127,6 +128,11 @@ class USCompareView(TemplateView):
                 datetime.strptime(a[0].text, '%b %d, %Y').date(), self.dow_map_reverse(self.dow_map(a[1].text)))
             last_day = (datetime.strptime(a[0].text, '%b %d, %Y').date(), self.dow_map_reverse(self.dow_map(a[1].text)))
         return (int(days_total), int(total_stands), first_day, last_day, estimated), day_start, day_end
+
+    def get(self, request):
+        if request.GET.get('format') == '2':
+            self.template_name = 'frontend/us_cmp2.html'
+        return super().get(request)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

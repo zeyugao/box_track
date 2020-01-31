@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        span {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+<p>在{{ days_range }}</p>
+
+<p>{{ frozen2_date }}，冰2{{ estimated }}<span>{{ frozen2_daily }}</span></p>
+<p>冰2累计{{ frozen2_total_due }}</p>
+<br>
+<p>{{ game_date }}，饥饿2精报{{ game_daily }}</p>
+<p>饥饿2累计{{ game_total_due }}</p>
+<p>冰2当日为饥饿2的<span>{{ frozen2_times_game }}</span>倍，饥饿2北美余量{{ game_remain }}</p>
+<br>
+<p>{{ dory_date }}，多莉精报{{ dory_daily }}</p>
+<p>多莉累计{{ dory_total_due }}</p>
+<p>
+    冰2与多莉同期差距{{ gap_frozen2_dory }}，<span>{{ gap_frozen2_dory_more_or_less }}</span>差距<span> {{ gap_frozen2_dory_diff }}</span>
+</p>
+<br>
+<p>{{ frozen_date }}，冰1精报{{ frozen_daily }}</p>
+<p>冰1累计{{ frozen_total_due }}</p>
+</body>
+
+</html>
