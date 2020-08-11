@@ -9,7 +9,7 @@ jobs:
       - name: Set up heroku app
         run: |
           cat > Procfile <<EOF
-          web: gunicorn app.app --log-file -
+          web: gunicorn .app.app --log-file -
           EOF
           cat > app.json <<EOF
           {
