@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Result</title>
+</head>
+<body>
+{{ error }}
+
+{{ movie_name }}
+
+{% for line in results %}
+    <p>{{ line[0] }} - {{ line[1] }} - {{ line[2] }} - {{ line[3] }}</p>
+{% endfor %}
+
+</body>
+</html>
