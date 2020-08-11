@@ -1,0 +1,42 @@
+on:
+  push:
+
+jobs:
+  deploy-to-heroku:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up heroku app
+        run: |
+          cat > Procfile <<EOF
+          web: gunicorn app.app --log-file -
+          EOF
+          cat > app.json <<EOF
+          {
+            "name": "Box Track",
+            "description": "Box Track",
+            "image": "heroku/python",
+            "keywords": [
+              "python",
+              "flask"
+            ]
+          }
+          EOF
+          cat > runtime.txt <<EOF
+          python-3.8.3
+          EOF
+          cat >> ./requirements.txt <<EOF
+          gunicorn
+          EOF
+      - name: Deploy to Heroku
+        working-directory: ./
+        run: |
+          CINFO="$(git log -1 --pretty="%an: [%h] %s")"
+          git clone "https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_GIT_REPO }}.git" heroku
+          rm -rf .git
+          mv ./heroku/.git ./
+          git add -A
+          git -c user.name=GitHub -c user.email=noreply@github.com commit   \
+            -m "Auto deploy from GitHub Actions build ${GITHUB_RUN_NUMBER}" \
+            -m "$CINFO"
+          git push
