@@ -9,8 +9,12 @@
 
 {{ movie_name }}
 
+{% for s in summary %}
+    <p>{{ s[0] }} | {{ s[1] }}</p>
+{% endfor %}
+
 {% for line in results %}
-    <p>{{ line[0] }} - {{ line[1] }} - {{ line[2] }} - {{ line[3] }}</p>
+    <p>{{ line[0] }} | {{ line[1] }} | {{ line[2] }} | {{ line[3] }}</p>
 {% endfor %}
 
 </body>
