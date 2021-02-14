@@ -1,4 +1,4 @@
-name: Deploy
+name: imdb Info Deploy
 
 on:
   push:
@@ -9,6 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up heroku app
+        working-directory: ./imdb_info
         run: |
           cat > Procfile <<EOF
           web: gunicorn app:app --log-file -
@@ -31,7 +32,7 @@ jobs:
           gunicorn
           EOF
       - name: Deploy to Heroku
-        working-directory: ./
+        working-directory: ./imdb_info
         run: |
           CINFO="$(git log -1 --pretty="%an: [%h] %s")"
           git clone "https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_GIT_REPO }}.git" heroku
