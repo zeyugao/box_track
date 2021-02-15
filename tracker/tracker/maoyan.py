@@ -40,7 +40,7 @@ def parse_box_sum(raw_box_sum):
 
 
 def fetch():
-    resp = requests.get(URL, headers=headers)
+    resp = requests.get(URL, headers=headers, timeout=10)
     data = resp.json()
 
     if not data.get('status'):

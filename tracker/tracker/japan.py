@@ -34,7 +34,7 @@ match_update_time = re.compile((
 
 
 def get_box():
-    resp = requests.get(base_url, headers=fake_headers)
+    resp = requests.get(base_url, headers=fake_headers, timeout=10)
     resp = resp.content.decode("utf-8")
     # with open("japan.html", "w", encoding="utf-8")as f:
     #     f.write(resp)
