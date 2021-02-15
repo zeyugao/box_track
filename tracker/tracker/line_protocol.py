@@ -1,3 +1,12 @@
+blacklist = [' ', ',', '=']
+
+
+def escape(s):
+    for char in blacklist:
+        s = s.replace(char, '\\' + char)
+    return s
+
+
 def parse(data_list):
     res_list = []
     for data in data_list:
@@ -7,7 +16,7 @@ def parse(data_list):
             result += ","
             result += ",".join([
                 "%s=%s" % (
-                    k, v
+                    k, escape(v)
                 ) for k, v in data["tags"].items()
             ])
 
