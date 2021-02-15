@@ -1,6 +1,5 @@
 import requests
 import re
-from .db import client
 
 URL = 'https://piaofang.maoyan.com/getBoxList?date=1&isSplit=true'
 headers = {
@@ -78,7 +77,7 @@ def fetch():
             "tags": {
                 "movie_name": movie_name
             },
-            "time": update_time,
+            "time": update_time * 1000,
             "fields": {
                 "box_office": box_office,
                 "box_rate": box_rate,
@@ -88,4 +87,4 @@ def fetch():
             }
         })
 
-    client.write_points(influx_data, time_precision="ms")
+    return influx_data
