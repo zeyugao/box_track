@@ -8,7 +8,6 @@ def main():
     parser.add_argument('--maoyan', action='store_true')
 
     args = parser.parse_args()
-    print(args)
     if args.maoyan:
         data = maoyan_fetch()
         print(parse(data))
