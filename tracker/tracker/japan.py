@@ -34,12 +34,12 @@ match_update_time = re.compile((
 
 
 def get_box():
-    # resp = requests.get(base_url, headers=fake_headers)
-    # resp = resp.content.decode("utf-8")
+    resp = requests.get(base_url, headers=fake_headers)
+    resp = resp.content.decode("utf-8")
     # with open("japan.html", "w", encoding="utf-8")as f:
     #     f.write(resp)
-    with open("japan.html", "r", encoding="utf-8") as f:
-        resp = f.read()
+    # with open("japan.html", "r", encoding="utf-8") as f:
+    #     resp = f.read()
     date_time = match_update_time.findall(resp)
     all_movies_box = match_box.findall(resp)
     return date_time, all_movies_box
