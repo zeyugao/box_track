@@ -55,18 +55,22 @@ def fetch():
 
     for movie in full_info:
         idx, sales, sales_inc, seat, seat_used, compare_to_last_week, percent_rate, surmise, movie_name = movie
+        fields = {
+            "box_office": sales,
+            "seat": seat,
+            "seat_used": float(seat_used) * 100,
+            "compare_to_last_week": compare_to_last_week,
+            "surmise": surmise
+        }
+        for key in list(fields):
+            if not fields[key]:
+                del fields[key]
         influx_data.append({
             "measurement": "japan",
             "tags": {
                 "movie_name": movie_name
             },
             "time": update_time_timestamp,
-            "fields": {
-                "box_office": sales,
-                "seat": seat,
-                "seat_used": float(seat_used) * 100,
-                "compare_to_last_week": compare_to_last_week,
-                "surmise": surmise
-            }
+            "fields": fields
         })
     return influx_data
