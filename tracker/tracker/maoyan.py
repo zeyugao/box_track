@@ -29,7 +29,7 @@ def parse_percent(per: str):
         per = per[:-1]
     if per.startswith('<'):
         per = per[1:]
-    return per
+    return float(per)
 
 
 box_sum_pattern = re.compile(r'([0-9.]+)([亿|万]?)')
@@ -66,10 +66,10 @@ def fetch():
         }
     }]
     for movie in data['list']:
-        box_office = movie['boxDesc']
+        box_office = float(movie['boxDesc'])
         box_rate = parse_percent(movie['boxRate'])
-        seat_count_rate = movie['seatCountRate']
-        show_count_rate = movie['showCountRate']
+        seat_count_rate = parse_percent(movie['seatCountRate'])
+        show_count_rate = parse_percent(movie['showCountRate'])
         sum_box_desc = parse_box_sum(movie['sumBoxDesc'])
         movie_name = movie['movieInfo']['movieName']
 
