@@ -53,7 +53,7 @@ def fetch():
     data = data['data']
 
     update_time = data['updateInfo']['updateTimestamp']  # ms
-    national_box_num = data['nationalBox']['num']
+    national_box_num = float(data['nationalBox']['num'])
     national_box_unit = data['nationalBox']['unit']
     national_box = national_box_num * unit2value[national_box_unit]
 
