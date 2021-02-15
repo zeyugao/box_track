@@ -77,7 +77,7 @@ def fetch():
             "tags": {
                 "movie_name": movie_name
             },
-            "time": update_time * 1000,
+            "time": update_time * 1000 * 1000, # ns
             "fields": {
                 "box_office": box_office,
                 "box_rate": box_rate,
