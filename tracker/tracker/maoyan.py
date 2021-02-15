@@ -51,7 +51,7 @@ def fetch():
         return False
     data = data['data']
 
-    update_time = data['updateInfo']['updateTimestamp']  # ms
+    update_time = data['updateInfo']['updateTimestamp'] * 1000 * 1000
     national_box_num = float(data['nationalBox']['num'])
     national_box_unit = data['nationalBox']['unit']
     national_box = national_box_num * unit2value[national_box_unit]
@@ -77,7 +77,7 @@ def fetch():
             "tags": {
                 "movie_name": movie_name
             },
-            "time": update_time * 1000 * 1000,  # ns
+            "time": update_time,
             "fields": {
                 "box_office": box_office,
                 "box_rate": box_rate,
