@@ -57,6 +57,7 @@ def fetch():
         idx, sales, sales_inc, seat, seat_used, compare_to_last_week, percent_rate, surmise, movie_name = movie
         fields = {
             "box_office": sales,
+            "box_office_inc": sales_inc,
             "seat": seat,
             "seat_used": float(seat_used) * 100,
             "compare_to_last_week": compare_to_last_week,
