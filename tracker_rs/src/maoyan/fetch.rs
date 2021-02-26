@@ -3,8 +3,9 @@ use reqwest::header::HeaderMap;
 use std::collections::HashMap;
 
 use serde_json::Value;
+use super::api_struct::MaoyanBoxStruct;
 
-pub async fn fetch_data() -> Result<HashMap<String, Value>, Box<dyn std::error::Error>> {
+pub async fn fetch_data() -> Result<MaoyanBoxStruct, Box<dyn std::error::Error>> {
     let url = "https://piaofang.maoyan.com/getBoxList?date=1&isSplit=true";
     let mut headers = HeaderMap::new();
     headers.insert("Host", "piaofang.maoyan.com".parse().unwrap());
@@ -21,6 +22,6 @@ pub async fn fetch_data() -> Result<HashMap<String, Value>, Box<dyn std::error::
 
     let client = reqwest::Client::new();
     let resp = client.get(url).headers(headers).send().await?;
-    let body = resp.json::<HashMap<String, Value>>().await?;
+    let body = resp.json::<MaoyanBoxStruct>().await?;
     Ok(body)
 }
